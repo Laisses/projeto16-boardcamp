@@ -5,6 +5,15 @@ export const selectCategories = async (_req, res) => {
     res.status(200).send(categories.rows);
 };
 
+export const addCategory = async (req, res) => {
+    const name = req.body;
+
+    await connection.query(
+        "INSERT INTO categories (name) VALUES ($1)",
+        [name]
+    )
+};
+
 export const selectGames = async (_req, res) => {
     const games = await connection.query("SELECT * FROM games");
     res.status(200).send(games.rows);
