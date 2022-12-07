@@ -6,12 +6,14 @@ export const selectCategories = async (_req, res) => {
 };
 
 export const addCategory = async (req, res) => {
-    const name = req.body;
+    const { name } = req.body;
 
     await connection.query(
         "INSERT INTO categories (name) VALUES ($1)",
         [name]
-    )
+    );
+
+    res.sendStatus(201);
 };
 
 export const selectGames = async (_req, res) => {
