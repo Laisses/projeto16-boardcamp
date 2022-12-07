@@ -96,6 +96,5 @@ export const selectCustomers = async (req, res) => {
     }
 
     const customers = await connection.query("SELECT * FROM customers;");
-    console.log(customers.rows);
     return res.status(200).send(customers.rows);
 };
