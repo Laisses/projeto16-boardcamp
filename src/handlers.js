@@ -28,8 +28,26 @@ export const addCategory = async (req, res) => {
     res.sendStatus(201);
 };
 
-export const selectGames = async (_req, res) => {
-    const games = await connection.query("SELECT * FROM games");
+export const selectGames = async (req, res) => {
+    const { name } = req.query;
+
+    const games = await connection.query(`
+        SELECT games.id, games.name, image, "stockTotal", "categoryId", "pricePerDay", categories.name as "categoryName"
+        FROM games
+        JOIN categories ON games."categoryId" = categories.id;
+    `);
+
+    if (name) {
+        const games = await connection.query(`
+            SELECT games.id, games.name, image, "stockTotal", "categoryId", "pricePerDay", categories.name as "categoryName"
+            FROM games
+            JOIN categories ON games."categoryId" = categories.id
+            WHERE games.name ILIKE $1;
+        `, [`${name}%`]);
+
+        return res.status(200).send(games.rows);
+    }
+
     res.status(200).send(games.rows);
 };
 
@@ -50,7 +68,7 @@ export const addGame = async (req, res) => {
         return res.sendStatus(409);
     }
 
-    if (categoryExists.rows.length === 0 ) {
+    if (categoryExists.rows.length === 0) {
         return res.sendStatus(400);
     }
 
@@ -65,10 +83,3 @@ export const addGame = async (req, res) => {
 
     res.sendStatus(201);
 };
-
-/*
-SELECT name, image FROM games
-
-SELECT games.name, games.image, category.name FROM games
-JOIN categories ON game.categoryId = categories.id
-*/
