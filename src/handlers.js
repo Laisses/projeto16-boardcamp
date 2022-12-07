@@ -1,15 +1,27 @@
 import { connection } from "./database.js";
 
 export const selectCategories = async (_req, res) => {
-    const categories = await connection.query("SELECT * FROM categories");
+    const categories = await connection.query("SELECT * FROM categories;");
     res.status(200).send(categories.rows);
 };
 
 export const addCategory = async (req, res) => {
     const { name } = req.body;
+    const nameExists = await connection.query(
+        "SELECT name FROM categories WHERE name = $1;",
+        [name]
+    );
+
+    if (!name) {
+        return res.sendStatus(400);
+    }
+
+    if (nameExists.rows.length !== 0) {
+        return res.sendStatus(409);
+    }
 
     await connection.query(
-        "INSERT INTO categories (name) VALUES ($1)",
+        "INSERT INTO categories (name) VALUES ($1);",
         [name]
     );
 
