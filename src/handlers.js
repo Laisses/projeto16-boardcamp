@@ -83,3 +83,19 @@ export const addGame = async (req, res) => {
 
     res.sendStatus(201);
 };
+
+export const selectCustomers = async (req, res) => {
+    const { cpf } = req.query;
+
+    if (cpf) {
+        const customers = await connection.query(`
+            SELECT * FROM customers WHERE cpf LIKE $1;`, [`${cpf}%`]
+        );
+
+        return res.status(200).send(customers.rows);
+    }
+
+    const customers = await connection.query("SELECT * FROM customers;");
+    console.log(customers.rows);
+    return res.status(200).send(customers.rows);
+};
