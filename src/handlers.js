@@ -96,7 +96,28 @@ export const selectCustomers = async (req, res) => {
     }
 
     const customers = await connection.query("SELECT * FROM customers;");
-    return res.status(200).send(customers.rows);
+
+    const editCustomers = customers.rows.map(c => {
+        const [birthdayString] = c.birthday.toISOString().split("T");
+        return {...c, birthday: birthdayString};
+    })
+
+    return res.status(200).send(editCustomers);
+};
+
+export const selectCustomer = async (req, res) => {
+    const { id } = req.params;
+
+    const costumer = await connection.query("SELECT * FROM customers WHERE id=$1", [id]);
+
+    if (costumer.rows.length === 0) {
+        return res.sendStatus(404);
+    }
+
+    const [birthdayString] = costumer.rows[0].birthday.toISOString().split("T");
+
+    res.status(200).send({...costumer.rows[0], birthday: birthdayString});
+
 };
 
 export const addCustomer = async (req, res) => {
