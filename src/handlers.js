@@ -120,7 +120,7 @@ export const selectCustomer = async (req, res) => {
 
 };
 
-const validateCustomer = async (body) => {
+const validateCustomer = async (body, res) => {
     const { name, phone, cpf, birthday } = body;
     const date = new Date(birthday);
 
@@ -151,7 +151,7 @@ const validateCustomer = async (body) => {
 }
 
 export const addCustomer = async (req, res) => {
-    const { name, phone, cpf, birthday } = await validateCustomer(req.body);
+    const { name, phone, cpf, birthday } = await validateCustomer(req.body, res);
 
     await connection.query("INSERT INTO customers (name, phone, cpf, birthday) VALUES ($1, $2, $3, $4);", [name, phone, cpf, birthday]);
 
