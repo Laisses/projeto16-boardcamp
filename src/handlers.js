@@ -99,7 +99,7 @@ export const selectCustomers = async (req, res) => {
 
     const editCustomers = customers.rows.map(c => {
         const [birthdayString] = c.birthday.toISOString().split("T");
-        return {...c, birthday: birthdayString};
+        return { ...c, birthday: birthdayString };
     })
 
     return res.status(200).send(editCustomers);
@@ -116,7 +116,7 @@ export const selectCustomer = async (req, res) => {
 
     const [birthdayString] = costumer.rows[0].birthday.toISOString().split("T");
 
-    res.status(200).send({...costumer.rows[0], birthday: birthdayString});
+    res.status(200).send({ ...costumer.rows[0], birthday: birthdayString });
 
 };
 
@@ -156,4 +156,16 @@ export const addCustomer = async (req, res) => {
     await connection.query("INSERT INTO customers (name, phone, cpf, birthday) VALUES ($1, $2, $3, $4);", [name, phone, cpf, birthday]);
 
     res.sendStatus(201);
+};
+
+export const updateCustomer = async (req, res) => {
+    const { name, phone, cpf, birthday } = await validateCustomer(req.body);
+    const { id } = req.params;
+
+    await connection.query(`UPDATE customers
+        SET name=$1, phone=$2, cpf=$3, birthday=$4
+        WHERE id=$5
+    ;`, [name, phone, cpf, birthday, id]);
+
+    res.sendStatus(200);
 };
