@@ -120,38 +120,8 @@ export const selectCustomer = async (req, res) => {
 
 };
 
-const validateCustomer = async (body, res) => {
-    const { name, phone, cpf, birthday } = body;
-    const date = new Date(birthday);
-
-    if (isNaN(date.getTime())) {
-        return res.sendStatus(400);
-    }
-
-    const cpfExists = await connection.query("SELECT * FROM customers WHERE cpf=$1", [cpf]);
-
-    if (cpfExists.rows.length !== 0) {
-        return res.sendStatus(409);
-    }
-
-    if (cpf.length !== 11 || isNaN(Number(cpf))) {
-        return res.sendStatus(400);
-
-    }
-
-    if (phone.length < 10 || phone.length > 11 || isNaN(Number(phone))) {
-        return res.sendStatus(400);
-    }
-
-    if (typeof name !== "string" || name === "") {
-        return res.sendStatus(400);
-    }
-
-    return body;
-}
-
 export const addCustomer = async (req, res) => {
-    const { name, phone, cpf, birthday } = await validateCustomer(req.body, res);
+    const { name, phone, cpf, birthday } = req.body;
 
     await connection.query("INSERT INTO customers (name, phone, cpf, birthday) VALUES ($1, $2, $3, $4);", [name, phone, cpf, birthday]);
 
@@ -159,7 +129,7 @@ export const addCustomer = async (req, res) => {
 };
 
 export const updateCustomer = async (req, res) => {
-    const { name, phone, cpf, birthday } = await validateCustomer(req.body);
+    const { name, phone, cpf, birthday } = req.body;
     const { id } = req.params;
 
     const costumer = await connection.query("SELECT * FROM customers WHERE id=$1", [id]);
