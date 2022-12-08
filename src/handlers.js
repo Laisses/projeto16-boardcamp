@@ -120,8 +120,8 @@ export const selectCustomer = async (req, res) => {
 
 };
 
-export const addCustomer = async (req, res) => {
-    const { name, phone, cpf, birthday } = req.body;
+const validateCustomer = async (body) => {
+    const { name, phone, cpf, birthday } = body;
     const date = new Date(birthday);
 
     if (isNaN(date.getTime())) {
@@ -146,6 +146,12 @@ export const addCustomer = async (req, res) => {
     if (typeof name !== "string" || name === "") {
         return res.sendStatus(400);
     }
+
+    return body;
+}
+
+export const addCustomer = async (req, res) => {
+    const { name, phone, cpf, birthday } = await validateCustomer(req.body);
 
     await connection.query("INSERT INTO customers (name, phone, cpf, birthday) VALUES ($1, $2, $3, $4);", [name, phone, cpf, birthday]);
 
