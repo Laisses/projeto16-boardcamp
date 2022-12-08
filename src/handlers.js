@@ -162,6 +162,12 @@ export const updateCustomer = async (req, res) => {
     const { name, phone, cpf, birthday } = await validateCustomer(req.body);
     const { id } = req.params;
 
+    const costumer = await connection.query("SELECT * FROM customers WHERE id=$1", [id]);
+
+    if (costumer.rows.length === 0) {
+        return res.sendStatus(404);
+    }
+
     await connection.query(`UPDATE customers
         SET name=$1, phone=$2, cpf=$3, birthday=$4
         WHERE id=$5
