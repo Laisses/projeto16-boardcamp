@@ -7,6 +7,7 @@ export const routes = (app) => {
     app.post("/categories", middlewares.asyncError(handlers.addCategory));
 
     app.get("/customers", middlewares.asyncError(handlers.selectCustomers));
+    app.post("/customers", middlewares.asyncError(handlers.addCustomer));
 
     app.get("/games", middlewares.asyncError(handlers.selectGames));
     app.post("/games", middlewares.asyncError(handlers.addGame));
