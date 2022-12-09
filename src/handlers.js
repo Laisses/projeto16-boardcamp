@@ -145,3 +145,54 @@ export const addGame = async (req, res) => {
 
     res.sendStatus(201);
 };
+
+export const selectRentals = async (req, res) => {
+    const [customerId, gameId] = req.query;
+
+    const rentalInfo = await connection.query(`
+    SELECT
+        rent.id, rent."customerId", rent."gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee", c.id AS "costumerId", c.name AS "costumerName", g.id AS "gameId", g.name AS "gameName", cat.id AS "categoryId", cat.name AS "categoryName"
+    FROM
+        rentals AS "rent"
+    JOIN
+        costumers AS "c"
+    ON
+        rentals."customerId" = customer.id
+    JOIN
+        games AS "g"
+    ON
+        rentals."gameId" = games.id
+    JOIN
+        categories AS "cat"
+    ON
+        g."categoryId" = cat.id
+    ;`);
+
+    const rentals = rentalInfo.map(r => {
+        return {
+            ...r,
+            customer: {
+                id: r.costumerId,
+                name: r.costumerName
+            },
+            game: {
+                id: r.gameId,
+                name: r.gameName,
+                categoryId: r.categoryId,
+                categoryName: r.categoryName
+            }
+        };
+    });
+
+    if (customerId) {
+        const rentalsByCustomer = rentals.filter(r => r.customer.id = customerId);
+        return res.status(200).send(rentalsByCustomer);
+    }
+
+    if (gameId) {
+        const rentalsByGame = rentals.filter(r => r.game.id = gameId);
+        return res.status(200).send(rentalsByGame);
+    }
+
+    res.status(200).send(rentals);
+};
