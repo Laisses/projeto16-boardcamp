@@ -52,15 +52,15 @@ export const selectCustomers = async (req, res) => {
 export const selectCustomer = async (req, res) => {
     const { id } = req.params;
 
-    const costumer = await connection.query("SELECT * FROM customers WHERE id=$1", [id]);
+    const customer = await connection.query("SELECT * FROM customers WHERE id=$1", [id]);
 
-    if (costumer.rows.length === 0) {
+    if (customer.rows.length === 0) {
         return res.sendStatus(404);
     }
 
-    const [birthdayString] = costumer.rows[0].birthday.toISOString().split("T");
+    const [birthdayString] = customer.rows[0].birthday.toISOString().split("T");
 
-    res.status(200).send({ ...costumer.rows[0], birthday: birthdayString });
+    res.status(200).send({ ...customer.rows[0], birthday: birthdayString });
 
 };
 
@@ -76,9 +76,9 @@ export const updateCustomer = async (req, res) => {
     const { name, phone, cpf, birthday } = req.body;
     const { id } = req.params;
 
-    const costumer = await connection.query("SELECT * FROM customers WHERE id=$1", [id]);
+    const customer = await connection.query("SELECT * FROM customers WHERE id=$1", [id]);
 
-    if (costumer.rows.length === 0) {
+    if (customer.rows.length === 0) {
         return res.sendStatus(404);
     }
 
@@ -147,15 +147,15 @@ export const addGame = async (req, res) => {
 };
 
 export const selectRentals = async (req, res) => {
-    const [customerId, gameId] = req.query;
+    const {customerId, gameId} = req.query;
 
     const rentalInfo = await connection.query(`
     SELECT
-        rent.id, rent."customerId", rent."gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee", c.id AS "costumerId", c.name AS "costumerName", g.id AS "gameId", g.name AS "gameName", cat.id AS "categoryId", cat.name AS "categoryName"
+        rent.id, rent."customerId", rent."gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee", c.id AS "customerId", c.name AS "customerName", g.id AS "gameId", g.name AS "gameName", cat.id AS "categoryId", cat.name AS "categoryName"
     FROM
         rentals AS "rent"
     JOIN
-        costumers AS "c"
+        customers AS "c"
     ON
         rentals."customerId" = customer.id
     JOIN
@@ -172,8 +172,8 @@ export const selectRentals = async (req, res) => {
         return {
             ...r,
             customer: {
-                id: r.costumerId,
-                name: r.costumerName
+                id: r.customerId,
+                name: r.customerName
             },
             game: {
                 id: r.gameId,
