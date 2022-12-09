@@ -47,7 +47,7 @@ export const validateUpdatedCustomer = async (req, res, next) => {
 
     const customerCpf = await connection.query("SELECT cpf FROM customers WHERE id=$1", [id]);
 
-    if(customerCpf.rows[0].cpf !== cpf) {
+    if (customerCpf.rows[0].cpf !== cpf) {
         const cpfExists = await connection.query("SELECT * FROM customers WHERE cpf=$1;", [cpf]);
 
         if (cpfExists.rows.length !== 0) {
@@ -69,6 +69,37 @@ export const validateUpdatedCustomer = async (req, res, next) => {
     }
 
     if (typeof name !== "string" || name === "") {
+        return res.sendStatus(400);
+    }
+
+    next();
+};
+
+export const validateNewRent = async (req, res, next) => {
+    const { customerId, gameId, daysRented } = req.body;
+
+    const customerExists = await connection.query(`SELECT * FROM customers WHERE id=$1;`, [customerId]);
+
+    const gameExists = await connection.query(`SELECT * FROM games WHERE id=$1;`, [gameId]);
+    const rentals = await connection.query(`SELECT * FROM rentals;`);
+
+       if (!customerExists.rows[0]) {
+        return res.sendStatus(400);
+    }
+
+    if (!gameExists.rows[0]) {
+        return res.sendStatus(400);
+    } else {
+        const gamesRented = rentals.rows.filter(g => { g.gameId === gameId });
+        const stock = gameExists.rows[0].stockTotal;
+
+        if (gamesRented >= stock) {
+            return res.sendStatus(400);
+        }
+    }
+
+    if (daysRented <= 0) {
+        console.log("dias menor ou igual a zero");
         return res.sendStatus(400);
     }
 

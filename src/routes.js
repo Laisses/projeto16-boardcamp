@@ -15,5 +15,5 @@ export const routes = (app) => {
     app.post("/games", m.asyncError(handlers.addGame));
 
     app.get("/rentals", m.asyncError(handlers.selectRentals));
-    app.post("/rentals", m.asyncError(handlers.addRental));
+    app.post("/rentals", m.validateNewRent, m.asyncError(handlers.addRental));
 };
