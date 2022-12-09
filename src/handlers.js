@@ -157,18 +157,18 @@ export const selectRentals = async (req, res) => {
     JOIN
         customers AS "c"
     ON
-        rentals."customerId" = customer.id
+        rent."customerId" = c.id
     JOIN
         games AS "g"
     ON
-        rentals."gameId" = games.id
+        rent."gameId" = g.id
     JOIN
         categories AS "cat"
     ON
         g."categoryId" = cat.id
     ;`);
 
-    const rentals = rentalInfo.map(r => {
+    const rentals = rentalInfo.rows.map(r => {
         return {
             ...r,
             customer: {
