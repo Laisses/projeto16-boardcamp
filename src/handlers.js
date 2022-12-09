@@ -147,7 +147,7 @@ export const addGame = async (req, res) => {
 };
 
 export const selectRentals = async (req, res) => {
-    const {customerId, gameId} = req.query;
+    const { customerId, gameId } = req.query;
 
     const rentalInfo = await connection.query(`
     SELECT
@@ -185,12 +185,12 @@ export const selectRentals = async (req, res) => {
     });
 
     if (customerId) {
-        const rentalsByCustomer = rentals.filter(r => r.customer.id = customerId);
+        const rentalsByCustomer = rentals.filter(r => r.customer.id === customerId);
         return res.status(200).send(rentalsByCustomer);
     }
 
     if (gameId) {
-        const rentalsByGame = rentals.filter(r => r.game.id = gameId);
+        const rentalsByGame = rentals.filter(r => r.game.id === gameId);
         return res.status(200).send(rentalsByGame);
     }
 
