@@ -13,4 +13,6 @@ export const routes = (app) => {
 
     app.get("/games", m.asyncError(handlers.selectGames));
     app.post("/games", m.asyncError(handlers.addGame));
+
+    app.get("/rentals", m.asyncError(handlers.selectRentals));
 };
