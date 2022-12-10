@@ -222,3 +222,28 @@ export const addRental = async (req, res) => {
 
     res.sendStatus(201);
 };
+
+export const finalizeRental = async (req, res) => {
+    const { id } = req.params;
+    const currentDate = new Date("2022-12-15");
+
+    const rental = await connection.query(`SELECT * FROM rentals WHERE id=$1;`, [id]);
+
+    const rentDate = rental.rows[0].rentDate;
+    const day = 1000 * 60 * 60 * 24;
+
+    const daysRented = Math.floor((currentDate.getTime() - rentDate.getTime()) / day);
+    const daysDelayed = daysRented - rental.rows[0].daysRented;
+
+    if (daysDelayed <= 0) {
+        await connection.query(`UPDATE rentals SET "returnDate"=$1;`, [currentDate]);
+        return res.sendStatus(200);
+    }
+
+    const price = rental.rows[0].originalPrice;
+    const delayFee = daysDelayed * price;
+
+    await connection.query(`UPDATE rentals SET "returnDate"=$1, "delayFee"=$2;`, [currentDate, delayFee]);
+
+    res.sendStatus(200);
+};
