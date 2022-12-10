@@ -105,3 +105,19 @@ export const validateNewRent = async (req, res, next) => {
 
     next();
 };
+
+export const validateReturn = async (req, res, next) => {
+    const {id} = req.params;
+
+    const rental = await connection.query(`SELECT * FROM rentals WHERE id=$1;`, [id]);
+
+    if(!rental.rows[0]) {
+        return res.sendStatus(404);
+    }
+
+    if(rental.rows[0].retrunDate) {
+        return res.sendStatus(400);
+    }
+
+    next();
+};
