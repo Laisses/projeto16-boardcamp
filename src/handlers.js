@@ -252,7 +252,7 @@ export const addRental = async (req, res) => {
 
 export const finalizeRental = async (req, res) => {
     const { id } = req.params;
-    const currentDate = new Date("2022-12-15");
+    const currentDate = new Date();
 
     const rental = await connection.query(`SELECT * FROM rentals WHERE id=$1;`, [id]);
 
