@@ -170,7 +170,7 @@ export const selectRentals = async (req, res) => {
 
     const rentals = rentalInfo.rows.map(r => {
 
-        if (!r.rentDate) {
+        if (!r.returnDate) {
             const [date] = r.rentDate.toISOString().split("T");
 
             return {
