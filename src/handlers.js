@@ -169,27 +169,54 @@ export const selectRentals = async (req, res) => {
     ;`);
 
     const rentals = rentalInfo.rows.map(r => {
-        const [date] = r.rentDate.toISOString().split("T");
 
-        return {
-            id: r.id,
-            customerId: r.customerId,
-            gameId: r.gameId,
-            rentDate: date,
-            returnDate: r.returnDate,
-            originalPrice: r.originalPrice,
-            delayFee: r.delayFee,
-            customer: {
-                id: r.customerId,
-                name: r.customerName
-            },
-            game: {
-                id: r.gameId,
-                name: r.gameName,
-                categoryId: r.categoryId,
-                categoryName: r.categoryName
-            }
-        };
+        if (!r.rentDate) {
+            const [date] = r.rentDate.toISOString().split("T");
+
+            return {
+                id: r.id,
+                customerId: r.customerId,
+                gameId: r.gameId,
+                rentDate: date,
+                returnDate: r.returnDate,
+                originalPrice: r.originalPrice,
+                delayFee: r.delayFee,
+                customer: {
+                    id: r.customerId,
+                    name: r.customerName
+                },
+                game: {
+                    id: r.gameId,
+                    name: r.gameName,
+                    categoryId: r.categoryId,
+                    categoryName: r.categoryName
+                }
+            };
+        } else {
+            const [rentedDate] = r.rentDate.toISOString().split("T");
+            const [returnedDate] = r.returnDate.toISOString().split("T");
+
+            return {
+                id: r.id,
+                customerId: r.customerId,
+                gameId: r.gameId,
+                rentDate: rentedDate,
+                returnDate: returnedDate,
+                originalPrice: r.originalPrice,
+                delayFee: r.delayFee,
+                customer: {
+                    id: r.customerId,
+                    name: r.customerName
+                },
+                game: {
+                    id: r.gameId,
+                    name: r.gameName,
+                    categoryId: r.categoryId,
+                    categoryName: r.categoryName
+                }
+            };
+        }
+
     });
 
     if (customerId) {
