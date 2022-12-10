@@ -263,14 +263,14 @@ export const finalizeRental = async (req, res) => {
     const daysDelayed = daysRented - rental.rows[0].daysRented;
 
     if (daysDelayed <= 0) {
-        await connection.query(`UPDATE rentals SET "returnDate"=$1;`, [currentDate]);
+        await connection.query(`UPDATE rentals SET "returnDate"=$1 WHERE id=$2;`, [currentDate, id]);
         return res.sendStatus(200);
     }
 
     const price = rental.rows[0].originalPrice;
     const delayFee = daysDelayed * price;
 
-    await connection.query(`UPDATE rentals SET "returnDate"=$1, "delayFee"=$2;`, [currentDate, delayFee]);
+    await connection.query(`UPDATE rentals SET "returnDate"=$1, "delayFee"=$2 WHERE id=$3;`, [currentDate, delayFee, id]);
 
     res.sendStatus(200);
 };
