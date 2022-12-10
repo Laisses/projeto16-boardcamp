@@ -169,8 +169,16 @@ export const selectRentals = async (req, res) => {
     ;`);
 
     const rentals = rentalInfo.rows.map(r => {
+        const [date] = r.rentDate.toISOString().split("T");
+
         return {
-            ...r,
+            id: r.id,
+            customerId: r.customerId,
+            gameId: r.gameId,
+            rentDate: date,
+            returnDate: r.returnDate,
+            originalPrice: r.originalPrice,
+            delayFee: r.delayFee,
             customer: {
                 id: r.customerId,
                 name: r.customerName
