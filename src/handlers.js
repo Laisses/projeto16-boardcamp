@@ -274,3 +274,11 @@ export const finalizeRental = async (req, res) => {
 
     res.sendStatus(200);
 };
+
+export const deleteRent = async (req, res) => {
+    const { id } = req.params;
+
+    await connection.query(`DELETE FROM rentals WHERE id=$1;`, [id]);
+
+    res.sendStatus(200);
+};
