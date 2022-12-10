@@ -17,5 +17,5 @@ export const routes = (app) => {
     app.get("/rentals", m.asyncError(handlers.selectRentals));
     app.post("/rentals", m.validateNewRent, m.asyncError(handlers.addRental));
     app.post("/rentals/:id/return", m.validateReturn, m.asyncError(handlers.finalizeRental));
-    app.delete("/rentals/:id", m.asyncError(handlers.deleteRent));
+    app.delete("/rentals/:id", m.validateDeletion, m.asyncError(handlers.deleteRent));
 };
