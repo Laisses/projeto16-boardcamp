@@ -21,3 +21,9 @@ export const game = Joi.object({
     categoryId: Joi.number().integer().required(),
     pricePerDay: Joi.number().integer().required()
 });
+
+export const rental = Joi.object({
+    customerId: Joi.number().integer().required(),
+    gameId: Joi.number().integer().required(),
+    daysRented: Joi.number().integer().required()
+});
