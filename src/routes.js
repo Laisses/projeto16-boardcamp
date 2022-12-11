@@ -13,7 +13,7 @@ export const routes = (app) => {
     app.put("/customers/:id", m.validate(s.user), m.validateUpdatedCustomer, m.asyncError(handlers.updateCustomer));
 
     app.get("/games", m.validateQueryParams, m.asyncError(handlers.selectGames));
-    app.post("/games", m.asyncError(handlers.addGame));
+    app.post("/games", m.validate(s.game), m.asyncError(handlers.addGame));
 
     app.get("/rentals", m.validateQueryParams, m.asyncError(handlers.selectRentals));
     app.post("/rentals", m.validateNewRent, m.asyncError(handlers.addRental));
