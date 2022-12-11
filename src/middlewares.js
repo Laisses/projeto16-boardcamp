@@ -1,4 +1,5 @@
 import { connection } from "./database.js";
+import {validator} from "./schemas.js";
 
 export const asyncError = handlerFn => async (req, res, next) => {
     try {
@@ -9,6 +10,21 @@ export const asyncError = handlerFn => async (req, res, next) => {
             message: "Internal Server Error"
         });
     }
+};
+
+export const validate = schema => (req, res, next) => {
+    const payload = req.body;
+    const { error } = validator(schema, payload);
+
+    if (error) {
+        const errors = error.details.map((detail) => detail.message);
+        return res.status(422).send({
+            message: "Unprocessable Entity",
+            errors,
+        });
+    }
+
+    next();
 };
 
 export const validateNewCustomer = async (req, res, next) => {
