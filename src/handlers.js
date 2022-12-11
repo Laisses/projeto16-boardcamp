@@ -1,7 +1,7 @@
 import { connection } from "./database.js";
 
 export const selectCategories = async (req, res) => {
-    const {limit, offset, order, desc} = req.query;
+    const { limit, offset, order, desc } = req.query;
 
     const allowedColumns = ["id", "name"];
     const orderName = allowedColumns.includes(order) ? order : "id";
@@ -180,7 +180,7 @@ export const addGame = async (req, res) => {
 };
 
 export const selectRentals = async (req, res) => {
-    const { customerId, gameId, offset, limit, order, desc } = req.query;
+    const { customerId, gameId, offset, limit, order, desc, status, startDate } = req.query;
 
     const allowedColumns = ["id", "customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee"];
     const orderName = allowedColumns.includes(order) ? order : "id";
@@ -218,7 +218,7 @@ export const selectRentals = async (req, res) => {
                 customerId: r.customerId,
                 gameId: r.gameId,
                 rentDate: date,
-                daysRented:r.daysRented,
+                daysRented: r.daysRented,
                 returnDate: r.returnDate,
                 originalPrice: r.originalPrice,
                 delayFee: r.delayFee,
@@ -242,7 +242,7 @@ export const selectRentals = async (req, res) => {
                 customerId: r.customerId,
                 gameId: r.gameId,
                 rentDate: rentedDate,
-                daysRented:r.daysRented,
+                daysRented: r.daysRented,
                 returnDate: returnedDate,
                 originalPrice: r.originalPrice,
                 delayFee: r.delayFee,
@@ -269,6 +269,16 @@ export const selectRentals = async (req, res) => {
     if (gameId) {
         const rentalsByGame = rentals.filter(r => r.game.id === gameId);
         return res.status(200).send(rentalsByGame);
+    }
+
+    if (status === "open") {
+        const openRentals = rentals.filter(r => !r.returnDate);
+        return res.status(200).send(openRentals);
+    }
+
+    if (status === "closed") {
+        const closedRentals = rentals.filter(r => r.returnDate);
+        return res.status(200).send(closedRentals);
     }
 
     res.status(200).send(rentals);
