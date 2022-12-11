@@ -1,12 +1,20 @@
 import { connection } from "./database.js";
 
 export const selectCategories = async (req, res) => {
-    const {limit, offset} = req.query;
+    const {limit, offset, order, desc} = req.query;
+
+    const allowedColumns = ["id", "name"];
+    const orderName = allowedColumns.includes(order) ? order : "id";
+    const direction = desc === "true" ? "DESC" : "ASC";
+
     const categories = await connection.query(`SELECT * FROM categories
+    ORDER BY ${orderName} ${direction}
     LIMIT $1
     OFFSET $2
     ;`, [limit || null, offset || null]);
+
     res.status(200).send(categories.rows);
+
 };
 
 export const addCategory = async (req, res) => {
@@ -33,7 +41,11 @@ export const addCategory = async (req, res) => {
 };
 
 export const selectCustomers = async (req, res) => {
-    const { cpf, offset, limit } = req.query;
+    const { cpf, offset, limit, order, desc } = req.query;
+
+    const allowedColumns = ["id", "name", "phone", "cpf", "birthday"];
+    const orderName = allowedColumns.includes(order) ? order : "id";
+    const direction = desc === "true" ? "DESC" : "ASC";
 
     if (cpf) {
         const customers = await connection.query(`
@@ -47,6 +59,7 @@ export const selectCustomers = async (req, res) => {
     }
 
     const customers = await connection.query(`SELECT * FROM customers
+    ORDER BY ${orderName} ${direction}
     LIMIT $1
     OFFSET $2
     ;`, [limit || null, offset || null]);
@@ -101,12 +114,17 @@ export const updateCustomer = async (req, res) => {
 };
 
 export const selectGames = async (req, res) => {
-    const { name, offset, limit } = req.query;
+    const { name, offset, limit, order, desc } = req.query;
+
+    const allowedColumns = ["id", "name", "image", "stockTotal", "categoryId", "pricePerDay", "categoryName"];
+    const orderName = allowedColumns.includes(order) ? order : "id";
+    const direction = desc === "true" ? "DESC" : "ASC";
 
     const games = await connection.query(`
         SELECT games.id, games.name, image, "stockTotal", "categoryId", "pricePerDay", categories.name as "categoryName"
         FROM games
         JOIN categories ON games."categoryId" = categories.id
+        ORDER BY "${orderName}" ${direction}
         LIMIT $1
         OFFSET $2;
     `, [limit || null, offset || null]);
@@ -117,6 +135,7 @@ export const selectGames = async (req, res) => {
             FROM games
             JOIN categories ON games."categoryId" = categories.id
             WHERE games.name ILIKE $1
+            ORDER BY "${orderName}" ${direction}
             LIMIT $2
             OFFSET $3;
         `, [`${name}%`, limit || null, offset || null]);
@@ -161,7 +180,11 @@ export const addGame = async (req, res) => {
 };
 
 export const selectRentals = async (req, res) => {
-    const { customerId, gameId, offset, limit } = req.query;
+    const { customerId, gameId, offset, limit, order, desc } = req.query;
+
+    const allowedColumns = ["id", "customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee"];
+    const orderName = allowedColumns.includes(order) ? order : "id";
+    const direction = desc === "true" ? "DESC" : "ASC";
 
     const rentalInfo = await connection.query(`
     SELECT
@@ -180,6 +203,7 @@ export const selectRentals = async (req, res) => {
         categories AS "cat"
     ON
         g."categoryId" = cat.id
+    ORDER BY "${orderName}" ${direction}
     LIMIT $1
     OFFSET $2
     ;`, [limit || null, offset || null]);
