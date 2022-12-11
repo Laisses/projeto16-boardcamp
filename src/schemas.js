@@ -9,3 +9,7 @@ export const user = Joi.object({
     cpf: Joi.string().min(11).max(11).required(),
     birthday: Joi.string().min(10).max(10).required(),
 });
+
+export const category = Joi.object({
+    name: Joi.string().required()
+});
