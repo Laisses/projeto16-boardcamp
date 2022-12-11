@@ -115,7 +115,6 @@ export const validateNewRent = async (req, res, next) => {
     }
 
     if (daysRented <= 0) {
-        console.log("dias menor ou igual a zero");
         return res.sendStatus(400);
     }
 
