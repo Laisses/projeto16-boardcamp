@@ -324,7 +324,7 @@ export const finalizeRental = async (req, res) => {
         return res.sendStatus(200);
     }
 
-    const price = rental.rows[0].originalPrice;
+    const price = Number(rental.rows[0].originalPrice);
     const delayFee = daysDelayed * price;
 
     await connection.query(`UPDATE rentals SET "returnDate"=$1, "delayFee"=$2 WHERE id=$3;`, [currentDate, delayFee, id]);
