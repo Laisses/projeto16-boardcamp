@@ -16,7 +16,7 @@ export const routes = (app) => {
     app.post("/games", m.validate(s.game), m.asyncError(handlers.addGame));
 
     app.get("/rentals", m.validateQueryParams, m.asyncError(handlers.selectRentals));
-    app.post("/rentals", m.validateNewRent, m.asyncError(handlers.addRental));
+    app.post("/rentals", m.validate(s.rental) ,m.validateNewRent, m.asyncError(handlers.addRental));
     app.post("/rentals/:id/return", m.validateReturn, m.asyncError(handlers.finalizeRental));
     app.delete("/rentals/:id", m.validateDeletion, m.asyncError(handlers.deleteRent));
 };
