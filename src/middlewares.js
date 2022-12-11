@@ -161,10 +161,30 @@ const isIntegerString = s => {
     return true;
 };
 
+const isOrderString = s => {
+    if (s === undefined) {
+        return true;
+    }
+
+    if (s.length === 0) {
+        return true;
+    }
+
+    if (typeof s === "string" && isNaN(s)) {
+        return true;
+    }
+
+    return false;
+};
+
 export const validateQueryParams = async (req, res, next) => {
-    const { offset, limit } = req.query;
+    const { offset, limit, order } = req.query;
 
     if (!isIntegerString(limit) || !isIntegerString(offset)) {
+        return res.sendStatus(400);
+    }
+
+    if (!isOrderString(order)) {
         return res.sendStatus(400);
     }
 
