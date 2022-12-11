@@ -133,7 +133,38 @@ export const validateDeletion = async (req, res, next) => {
 
     const returnDate = rental.rows[0].returnDate;
 
-    if(!returnDate) {
+    if (!returnDate) {
+        return res.sendStatus(400);
+    }
+
+    next();
+};
+
+const isIntegerString = s => {
+    if (s === undefined) {
+        return true;
+    }
+
+    if (typeof s !== "string") {
+        return false;
+    }
+
+    if (s.length === 0) {
+        return true;
+    }
+
+    const n = Number(s);
+    if (isNaN(n) || n < 0 || n !== Math.floor(n)) {
+        return false;
+    }
+
+    return true;
+};
+
+export const validateQueryParams = async (req, res, next) => {
+    const { offset, limit } = req.query;
+
+    if (!isIntegerString(limit) || !isIntegerString(offset)) {
         return res.sendStatus(400);
     }
 
