@@ -281,6 +281,11 @@ export const selectRentals = async (req, res) => {
         return res.status(200).send(closedRentals);
     }
 
+    if (startDate) {
+        const filteredRentals = rentals.filter(r => r.rentDate >= startDate);
+        return res.status(200).send(filteredRentals);
+    }
+
     res.status(200).send(rentals);
 };
 
