@@ -1,7 +1,11 @@
 import { connection } from "./database.js";
 
-export const selectCategories = async (_req, res) => {
-    const categories = await connection.query("SELECT * FROM categories;");
+export const selectCategories = async (req, res) => {
+    const {limit, offset} = req.query;
+    const categories = await connection.query(`SELECT * FROM categories
+    LIMIT $1
+    OFFSET $2
+    ;`, [limit || null, offset || null]);
     res.status(200).send(categories.rows);
 };
 
@@ -29,17 +33,23 @@ export const addCategory = async (req, res) => {
 };
 
 export const selectCustomers = async (req, res) => {
-    const { cpf } = req.query;
+    const { cpf, offset, limit } = req.query;
 
     if (cpf) {
         const customers = await connection.query(`
-            SELECT * FROM customers WHERE cpf LIKE $1;`, [`${cpf}%`]
+            SELECT * FROM customers WHERE cpf LIKE $1
+            LIMIT $2
+            OFFSET $3;
+        `, [`${cpf}%`, limit || null, offset || null]
         );
 
         return res.status(200).send(customers.rows);
     }
 
-    const customers = await connection.query("SELECT * FROM customers;");
+    const customers = await connection.query(`SELECT * FROM customers
+    LIMIT $1
+    OFFSET $2
+    ;`, [limit || null, offset || null]);
 
     const editCustomers = customers.rows.map(c => {
         const [birthdayString] = c.birthday.toISOString().split("T");
@@ -91,21 +101,25 @@ export const updateCustomer = async (req, res) => {
 };
 
 export const selectGames = async (req, res) => {
-    const { name } = req.query;
+    const { name, offset, limit } = req.query;
 
     const games = await connection.query(`
         SELECT games.id, games.name, image, "stockTotal", "categoryId", "pricePerDay", categories.name as "categoryName"
         FROM games
-        JOIN categories ON games."categoryId" = categories.id;
-    `);
+        JOIN categories ON games."categoryId" = categories.id
+        LIMIT $1
+        OFFSET $2;
+    `, [limit || null, offset || null]);
 
     if (name) {
         const games = await connection.query(`
             SELECT games.id, games.name, image, "stockTotal", "categoryId", "pricePerDay", categories.name as "categoryName"
             FROM games
             JOIN categories ON games."categoryId" = categories.id
-            WHERE games.name ILIKE $1;
-        `, [`${name}%`]);
+            WHERE games.name ILIKE $1
+            LIMIT $2
+            OFFSET $3;
+        `, [`${name}%`, limit || null, offset || null]);
 
         return res.status(200).send(games.rows);
     }
@@ -147,7 +161,7 @@ export const addGame = async (req, res) => {
 };
 
 export const selectRentals = async (req, res) => {
-    const { customerId, gameId } = req.query;
+    const { customerId, gameId, offset, limit } = req.query;
 
     const rentalInfo = await connection.query(`
     SELECT
@@ -166,7 +180,9 @@ export const selectRentals = async (req, res) => {
         categories AS "cat"
     ON
         g."categoryId" = cat.id
-    ;`);
+    LIMIT $1
+    OFFSET $2
+    ;`, [limit || null, offset || null]);
 
     const rentals = rentalInfo.rows.map(r => {
 
