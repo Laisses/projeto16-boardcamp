@@ -317,7 +317,7 @@ export const finalizeRental = async (req, res) => {
     const day = 1000 * 60 * 60 * 24;
 
     const daysRented = Math.floor((currentDate.getTime() - rentDate.getTime()) / day);
-    const daysDelayed = daysRented - rental.rows[0].daysRented;
+    const daysDelayed = daysRented - Number(rental.rows[0].daysRented);
 
     if (daysDelayed <= 0) {
         await connection.query(`UPDATE rentals SET "returnDate"=$1 WHERE id=$2;`, [currentDate, id]);
