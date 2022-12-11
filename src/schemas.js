@@ -13,3 +13,11 @@ export const user = Joi.object({
 export const category = Joi.object({
     name: Joi.string().required()
 });
+
+export const game = Joi.object({
+    name: Joi.string().required(),
+    image: Joi.string(),
+    stockTotal: Joi.number().integer().min(1).required(),
+    categoryId: Joi.number().integer().required(),
+    pricePerDay: Joi.number().integer().required()
+});
