@@ -177,6 +177,22 @@ const isQueryString = s => {
     return false;
 };
 
+const isQueryDate = d => {
+    if (d === undefined) {
+        return true;
+    }
+
+    if (d.length !== 10) {
+        return false;
+    }
+
+    if (!(new Date(d).toString() === "Invalid Date")) {
+        return true;
+    }
+
+    return false;
+};
+
 export const validateQueryParams = async (req, res, next) => {
     const { offset, limit, order, status, startDate } = req.query;
 
@@ -185,6 +201,10 @@ export const validateQueryParams = async (req, res, next) => {
     }
 
     if (!isQueryString(order) || !isQueryString(startDate) || !isQueryString(status)) {
+        return res.sendStatus(400);
+    }
+
+    if (!isQueryDate(startDate)) {
         return res.sendStatus(400);
     }
 
