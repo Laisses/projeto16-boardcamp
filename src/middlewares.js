@@ -161,7 +161,7 @@ const isIntegerString = s => {
     return true;
 };
 
-const isOrderString = s => {
+const isQueryString = s => {
     if (s === undefined) {
         return true;
     }
@@ -178,13 +178,13 @@ const isOrderString = s => {
 };
 
 export const validateQueryParams = async (req, res, next) => {
-    const { offset, limit, order } = req.query;
+    const { offset, limit, order, status, startDate } = req.query;
 
     if (!isIntegerString(limit) || !isIntegerString(offset)) {
         return res.sendStatus(400);
     }
 
-    if (!isOrderString(order)) {
+    if (!isQueryString(order) || !isQueryString(startDate) || !isQueryString(status)) {
         return res.sendStatus(400);
     }
 
